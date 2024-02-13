@@ -27,14 +27,15 @@ def calcular_dia_de_la_semana(anyo, mes, dia):
 	c =  b // 4 - 2 * b
 	d = a // 4
 	e = (13 * (mes + 1) // 5)
-	f = (a  + c + d + e - 1 + dia) % 7
-	return f + 1
+	f = (a  + c + d + e + dia) % 7
+	return f
 	
   
 def dia_de_la_semana(anyo, mes, dia):
-	dia_de_la_semana = calcular_dia_de_la_semana(anyo, mes, dia)
-	print("dia_de_la_semana",dia_de_la_semana)
+	dia_semana = calcular_dia_de_la_semana(anyo, mes, dia)
 	nombre_dia_de_la_semana = ["Sábado", "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"]
-	return nombre_dia_de_la_semana[dia_de_la_semana]
+	return nombre_dia_de_la_semana[dia_semana]
 
 
+# print(dia_de_la_semana(1988,9,2), "debe ser Viernes")
+# print(dia_de_la_semana(1990,9,13), "debe ser Jueves")
