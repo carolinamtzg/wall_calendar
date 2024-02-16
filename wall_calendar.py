@@ -1,13 +1,10 @@
 # Desarrollar una clase en Python llamada WallCalendar que simule un calendario de pared
 # el cual se puede inicializar con un número específico de años, meses y días.
-from controls import es_año_bisiesto, dia_de_la_semana
+from controls import es_año_bisiesto, dia_de_la_semana, dias_por_mes
 
 class WallCalendar():
   def __init__(self, anno, mes, dia):
-    # validar que cada valor es correcto:
     self.validar_anno(anno) # validar año
-    self.validar_mes(mes) # validar mes
-    self.validar_dia_del_mes(anno,mes,dia) # validar mes
 
     self.anno = anno
     self.mes = mes
@@ -20,36 +17,19 @@ class WallCalendar():
 
     return meses[mes - 1]
   
-  def validar_dia_del_mes(self, anno, mes, dia):
-    # Meses que tienen 30 dias: abril, junio, septiembre y noviembre.
-    mes_de_30_dias = mes in [4,6,9,11]
-    numero_de_dias_valido = dia >= 1 and dia <= 30
-    if mes_de_30_dias and numero_de_dias_valido:
-      return dia
-    if mes_de_30_dias and not numero_de_dias_valido:
-      raise ValueError(f"{self.nombre_mes(mes)} tiene 30 días.")
+  def ajusta_fecha(self, anno, mes, dia):
+    while mes >= 12:
+      anno += 1 # incrementa año
+      mes -= 12 # mes pasa a ser 1
+      
+    while dia > dias_por_mes(anno, mes):
+      dia -= dias_por_mes(anno, mes) # resta el dia de los dias x mes que hay en el mes del año
+      mes += 1 # incrementa el mes
+      if mes > 12: # si el mes es > 12
+        anno += 1 # incrementar el año
+        mes -= 12 # restar 12 meses para resetear los meses el siguiente año
 
-    # si es febrero y año bisiesto:
-    es_febrero = mes == 2
-    bisiesto = es_año_bisiesto(anno)
-    numero_dias_febrero_bisiesto_valido = dia >= 1 and dia <= 29
-    if es_febrero and bisiesto and numero_dias_febrero_bisiesto_valido:
-      return dia
-    if es_febrero and bisiesto and not numero_dias_febrero_bisiesto_valido:
-      raise ValueError(f"{self.nombre_mes(mes)} tiene 29 días.")
-    
-    # febrero y no es año bisiesto:
-    numero_dias_febrero_valido = dia >= 1 and dia <= 28
-    if es_febrero and numero_dias_febrero_valido:
-      return dia
-    if es_febrero and not numero_dias_febrero_valido:
-      raise ValueError(f"{self.nombre_mes(mes)} solo tiene 28 días.")
-    else:
-      # mes con 31 dias:
-      if dia >= 1 and 31:
-        return dia
-      else:
-        raise ValueError(f"{self.nombre_mes(mes)} tiene 31 días.")
+    return f"{dia} de {self.nombre_mes(mes)} de {anno:04d}"
       
   def dia_de_la_semana(self, anno, mes, dia):
     return dia_de_la_semana(anno, mes, dia)
@@ -58,16 +38,14 @@ class WallCalendar():
   def validar_anno(self, anno):
     if anno <= 1:
       raise ValueError("El año debe ser mayor o igual de 1")
-    
-  #validar mes:
-  def validar_mes(self, mes):
-    if mes < 1 or mes > 12:
-      raise ValueError("Número de mes no válido")
   
 # Una vez inicializado
 # el calendario debe almacenar internamente una fecha válida basada en los cálculos anteriores.
   def mostrar_fecha(self):
-    return f"{dia_de_la_semana(self.anno, self.mes, self.dia)}, {self.dia} de {self.nombre_mes(self.mes)} de {self.anno:04d}"
+    nueva_fecha = self.ajusta_fecha(self.anno, self.mes, self.dia)
+    dia_de_la_semana = self.dia_de_la_semana(self.anno, self.mes, self.dia)
+
+    return f"{dia_de_la_semana}, {nueva_fecha}"
   
   # avance la fecha del calendario en un día.
   # Este método debe ajustar automáticamente el mes y el año si es necesario.
@@ -103,7 +81,9 @@ class WallCalendar():
       self.anno += 1
 
 
-fecha = WallCalendar(2024,2,13)
+fecha = WallCalendar(2024, 2, 15)
 print(fecha.mostrar_fecha())
 fecha.avanzar_un_dia()
 print(fecha.mostrar_fecha())
+
+# 1970, 3, 39 -> tendría que ser 1970,4,8

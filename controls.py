@@ -36,6 +36,18 @@ def dia_de_la_semana(anyo, mes, dia):
 	nombre_dia_de_la_semana = ["Sábado", "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"]
 	return nombre_dia_de_la_semana[dia_semana]
 
+def dias_por_mes(anyo, mes):
+    mes_de_30_dias = mes in [4,6,9,11]
+    if mes_de_30_dias:
+      return 30
+    
+    es_febrero = mes == 2
+    bisiesto = es_año_bisiesto(anyo)
+    if es_febrero and bisiesto:
+      return 28
+    if es_febrero:
+      return 28
+    return 31
 
 # print(dia_de_la_semana(1988,9,2), "debe ser Viernes")
 # print(dia_de_la_semana(1990,9,13), "debe ser Jueves")
